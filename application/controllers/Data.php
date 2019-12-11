@@ -224,7 +224,7 @@ class Data extends CI_Controller
 
 	public function getGeo($location){
 		$httpClient = new \Http\Adapter\Guzzle6\Client();
-		$provider = new \Geocoder\Provider\GoogleMaps\GoogleMaps($httpClient);
+		$provider = new \Geocoder\Provider\GoogleMaps\GoogleMaps($httpClient, null, ' YOUR API KEY ');
 		$geocoder = new \Geocoder\StatefulGeocoder($provider, 'en');
 		$result = $geocoder->geocodeQuery(GeocodeQuery::create($location));
 		$Longitude = $result->first()->getCoordinates()->getLongitude();
@@ -316,7 +316,8 @@ class Data extends CI_Controller
 
 	public function distance($LatOri,$LongOri,$LatDes,$LongDes){
 
-		$distance_data = file_get_contents('https://maps.googleapis.com/maps/api/distancematrix/json?&origins='.$LatOri.','.$LongOri.'&destinations='.$LatDes.','.$LongDes.'&key=AIzaSyAxXasmylWyKiP2KJ4PlzAjkTr23YjCC0Y');
+		$distance_data = file_get_contents('https://maps.googleapis.com/maps/api/distancematrix/json?&origins='.
+		$LatOri.','.$LongOri.'&destinations='.$LatDes.','.$LongDes.'&key=AIzaSyDqbm_elcDKWWLMF2YT9a8-9Q0fns2YTEo');
 		$distance_arr = json_decode($distance_data);
 		$result = $distance_arr->rows;
 

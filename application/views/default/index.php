@@ -252,7 +252,7 @@
 
 <!--End of modal search -->
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxXasmylWyKiP2KJ4PlzAjkTr23YjCC0Y" type="text/javascript"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqbm_elcDKWWLMF2YT9a8-9Q0fns2YTEo" type="text/javascript"></script>
 
 <script>
 	getData();
