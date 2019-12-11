@@ -1,4 +1,5 @@
 # K Means Clustering Implemented On Codeigniter To Find Strategic Market
+![](demo.gif)
 
 <b><h2>Installation</h2></b>
 <p>1 .You need to install composer, <a href="https://getcomposer.org/download/"> Read how to install composer</a></p>
@@ -61,27 +62,21 @@ public function distance($LatOri,$LongOri,$LatDes,$LongDes){
 <p><h3><b> Code of Methode K Means Clustering Implemented On Codeigniter </b></h3>
 <p> Controller</p>
 ```php
-public function KMeans($data,$k){
+ public function KMeans($data,$k){
 
-		$length = count($data);
+ $length = count($data);
 
-		//Menghilangkan dot pada list harga dari datasets
-		for($i = 0; $i < $length; $i++){
-			$data[$i]["Harga"] = str_replace(".", "", $data[$i]["Harga"]);
-		}
-
-		$centroid = $this->setCluster($data,$k);
-
-		//urutkan
-		usort($centroid, function($a, $b) { //Sort the array using a user defined function
-			return $a > $b ? -1 : 1; //Compare the scores
-		});
-
-		$result = $this->KMeans_model->KMeans($data, $centroid);
-
-		return $result;
-
-	}
+ for($i = 0; $i < $length; $i++){
+  $data[$i]["Harga"] = str_replace(".", "", $data[$i]["Harga"]);
+ }
+ $centroid = $this->setCluster($data,$k);
+ //urutkan
+ usort($centroid, function($a, $b) { //Sort the array using a user defined function
+  return $a > $b ? -1 : 1; //Compare the scores
+ });
+ $result = $this->KMeans_model->KMeans($data, $centroid);
+ return $result;
+}
 ```
 <p> Model</p>
 ```php
