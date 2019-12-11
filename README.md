@@ -1,7 +1,7 @@
 # K Means Clustering Implemented On Codeigniter To Find Strategic Market
 ![](demo.gif)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D_5.5.9-8892BF.svg)](https://github.com/symfony/symfony)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D_5.5.9-8892BF.svg)](https://github.com/bcit-ci/CodeIgniter)
 <b><h2>Installation</h2></b>
 <p>1 .You need to install composer, <a href="https://getcomposer.org/download/"> Read how to install composer</a></p>
 <p>2. Install git, <a href="https://gist.github.com/derhuerst/1b15ff4652a867391f03"> Read how to install git</a></p>
