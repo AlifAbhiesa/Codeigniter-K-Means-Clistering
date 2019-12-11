@@ -1,0 +1,146 @@
+[
+  {
+    "Pasar": "Pasar Pondok Gede, Kota Bekasi",
+    "Harga": "12.300",
+    "Longitude": 106.9130499,
+    "Latitude": -6.286039799999999,
+    "No": "b",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Kosambi, Kota Bandung",
+    "Harga": "12.250",
+    "Longitude": 107.6220919,
+    "Latitude": -6.919252699999999,
+    "No": "b",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Anyar, Kota Bogor",
+    "Harga": "12.150",
+    "Longitude": 106.7925496,
+    "Latitude": -6.592065499999999,
+    "No": "a",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Warung Jambu 2, Kota Bogor",
+    "Harga": "11.950",
+    "Longitude": 106.8091219,
+    "Latitude": -6.5679265,
+    "No": "b",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Kiara Condong, Kota Bandung",
+    "Harga": "11.350",
+    "Longitude": 107.6449952,
+    "Latitude": -6.9261846,
+    "No": "a",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Singaparna, Kab. Tasikmalaya",
+    "Harga": "11.250",
+    "Longitude": 108.1117287,
+    "Latitude": -7.3498971,
+    "No": "b",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Cisalak, Kota Depok",
+    "Harga": "11.200",
+    "Longitude": 106.8738909,
+    "Latitude": -6.376765,
+    "No": "b",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Kranji, Kota Bekasi",
+    "Harga": "11.150",
+    "Longitude": 106.9794073,
+    "Latitude": -6.2261425,
+    "No": "a",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Kramat, Kota Cirebon",
+    "Harga": "11.150",
+    "Longitude": 108.5557225,
+    "Latitude": -6.7013842,
+    "No": "b",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Agung, Kota Depok",
+    "Harga": "11.100",
+    "Longitude": 106.8456268,
+    "Latitude": -6.392690699999999,
+    "No": "a",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Manonjaya, Kab. Tasikmalaya",
+    "Harga": "11.000",
+    "Longitude": 108.2973986,
+    "Latitude": -7.352509400000001,
+    "No": "a",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Pancasila, Kota Tasikmalaya",
+    "Harga": "10.750",
+    "Longitude": 108.2284648,
+    "Latitude": -7.325694200000001,
+    "No": "b",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Kanoman, Kota Cirebon",
+    "Harga": "10.750",
+    "Longitude": 108.5677501,
+    "Latitude": -6.7212418,
+    "No": "a",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Weru, Kab. Cirebon",
+    "Harga": "10.650",
+    "Longitude": 108.494447,
+    "Latitude": -6.7019676,
+    "No": "b",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Cikurubuk, Kota Tasikmalaya",
+    "Harga": "10.650",
+    "Longitude": 108.2048093,
+    "Latitude": -7.337883300000001,
+    "No": "a",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Mundu, Kab. Cirebon",
+    "Harga": "10.600",
+    "Longitude": 108.5944931,
+    "Latitude": -6.7570545,
+    "No": "a",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Gudang, Kota Sukabumi",
+    "Harga": "10.150",
+    "Longitude": 106.9300808,
+    "Latitude": -6.9258038,
+    "No": "a",
+	"Jarak" : 11212
+  },
+  {
+    "Pasar": "Pasar Pelita, Kota Sukabumi",
+    "Harga": "9.950",
+    "Longitude": 106.9306639,
+    "Latitude": -6.9242029,
+    "No": "b",
+	"Jarak" : 11212
+  }
+]

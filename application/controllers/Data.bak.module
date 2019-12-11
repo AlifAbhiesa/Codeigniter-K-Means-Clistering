@@ -1,0 +1,290 @@
+<?php
+
+use Geocoder\Query\GeocodeQuery;
+use Geocoder\Query\ReverseQuery;
+
+class Data extends CI_Controller
+{
+
+	function __construct(){
+		parent::__construct();
+		$this->load->model('KMeans_model');
+	}
+
+
+
+	public function index(){
+
+		$LatOri = $_POST['lat'];
+		$LongOri = $_POST['lng'];
+		$cat = $_POST['cat'];
+		$qty = $_POST['qty'];
+
+		//echo $LongOri;
+		echo json_encode($this->preProcessing($LatOri,$LongOri,$cat,$qty));
+
+		//echo "Ok";
+
+	}
+
+	public function getDate($date_raw){
+		//$date_raw = "2019-05-06";
+
+		$i = 0;
+		while($i < 2){
+			$dm[$i] = date('d-m-Y', strtotime('-1 day', strtotime($date_raw)));
+			$date_raw = $dm[$i];
+
+			if( (date('D', strtotime($dm[$i])) == 'Sun') || (date('D', strtotime($dm[$i])) == 'Sat')){
+				// don't get the weekend day
+			}else{
+				$i++;
+			}
+		}
+
+		return $dm;
+
+	}
+
+	public function preProcessing($LatOri,$LongOri,$cat,$qty){
+
+		$condition = true;
+		$dateNow = date("Y-m-d");
+
+		while ($condition){
+			if( (date('D', strtotime($dateNow)) == 'Sun') || (date('D', strtotime($dateNow)) == 'Sat')){
+				$dateNow = date('Y-m-d', strtotime('-1 day', strtotime($dateNow)));
+			}else{
+				$condition = false;
+			}
+		}
+
+		$date = $this->getDate(date("Y-m-d",strtotime($dateNow)));
+		$postdata = http_build_query(
+			array(
+				'filter_province_ids' => '12',
+				'filter_layout' => 'default',
+				'filter_start_date' => $date[1],
+				'filter_end_date' => date("Y-m-d"),
+				'filter_commodity_id' => $cat,
+				'filter_show_regency' => '1',
+				'filter_show_market' => '1'
+			)
+		);
+
+		$opts = array('http' =>
+			array(
+				'method'  => 'POST',
+				'header'  => 'Content-type: application/x-www-form-urlencoded',
+				'content' => $postdata
+			)
+		);
+
+		$context  = stream_context_create($opts);
+
+		$htmlContent = file_get_contents('https://hargapangan.id/tabel-harga/pasar-tradisional/komoditas', false, $context);
+
+		$DOM = new DOMDocument();
+		libxml_use_internal_errors(true);
+		$DOM->loadHTML($htmlContent);
+
+		$Header = $DOM->getElementsByTagName('th');
+		$Detail = $DOM->getElementsByTagName('td');
+
+		//#Get header name of the table
+		foreach($Header as $NodeHeader)
+		{
+			$aDataTableHeaderHTML[] = trim($NodeHeader->textContent);
+		}
+
+		//#Get row data/detail table without header name as key
+		$i = 0;
+		$j = 0;
+		foreach($Detail as $sNodeDetail)
+		{
+			$aDataTableDetailHTML[$j][] = trim($sNodeDetail->textContent);
+			$i = $i + 1;
+			$j = $i % count($aDataTableHeaderHTML) == 0 ? $j + 1 : $j;
+		}
+
+		//#Get row data/detail table with header name as key and outer array index as row number
+		for($i = 0; $i < count($aDataTableDetailHTML); $i++)
+		{
+			for($j = 0; $j < count($aDataTableHeaderHTML); $j++)
+			{
+				$aTempData[$i][$aDataTableHeaderHTML[$j]] = $aDataTableDetailHTML[$i][$j];
+			}
+		}
+		$aDataTableDetailHTML = $aTempData; unset($aTempData);
+
+
+		$length = count($aDataTableDetailHTML);
+
+		$result = array();
+
+		//Change key of JSON
+		$kota = null;
+		for($i = 0; $i < $length; $i++){
+
+			if(is_numeric($aDataTableDetailHTML[$i]['No.'])){
+				$kota = ', '.$aDataTableDetailHTML[$i]['Provinsi (Rp)'];
+			}
+
+			$result[$i]['Pasar'] = $aDataTableDetailHTML[$i]['Provinsi (Rp)'].$kota;
+
+			if($aDataTableDetailHTML[$i][date("d/m/Y", strtotime($date[1]))] != '-'){
+				$result[$i]['Harga'] = $aDataTableDetailHTML[$i][date("d/m/Y", strtotime($date[1]))];
+			}
+			if($aDataTableDetailHTML[$i][date("d/m/Y", strtotime($date[0]))] != '-'){
+				$result[$i]['Harga'] = $aDataTableDetailHTML[$i][date("d/m/Y", strtotime($date[0]))];
+			}
+			if($aDataTableDetailHTML[$i][date("d/m/Y", strtotime($dateNow))] != '-'){
+				$result[$i]['Harga'] = $aDataTableDetailHTML[$i][date("d/m/Y", strtotime($dateNow))];
+			}
+
+			//$result[$i]['Harga'] = $aDataTableDetailHTML[$i][date("d/m/Y")];
+
+
+			$result[$i]['No'] = $aDataTableDetailHTML[$i]['No.'];
+		}
+
+
+
+		//get Pasar only
+		for($i = 0; $i < $length; $i++){
+			if(is_numeric($result[$i]['No']) || $result[$i]['No'] == "I" || $result[$i]['No'] == "II"){
+				unset($result[$i]);
+			}
+		}
+
+		//shorting
+		usort($result, function($a, $b) { //Sort the array using a user defined function
+			return $a['Harga'] > $b['Harga'] ? -1 : 1; //Compare the scores
+		});
+
+
+		//KMeans
+		$KMeansRes = $this->KMeans($result);
+
+		// length2 = banyak index array kelompok harga tertinggi
+		$length2 = count($KMeansRes);
+
+		$finalResult = array();
+
+		//Mengambil Long Lat
+		for($i = 0; $i < $length2; $i++){
+			$geo = $this->getGeo($KMeansRes[$i]['Pasar']);
+			$finalResult[$i]['Pasar'] = $KMeansRes[$i]['Pasar'];
+			$finalResult[$i]['Harga'] = $KMeansRes[$i]['Harga'];
+			$finalResult[$i]['Longitude'] = $geo['Longitude'];
+			$finalResult[$i]['Latitude'] = $geo['Latitude'];
+		}
+
+		//Mengambil Jarak
+		for($z = 0; $z < $length2; $z++){
+			$finalResult[$z]['Jarak'] = $this->distance($LatOri,$LongOri,
+				$finalResult[$z]['Latitude'],$finalResult[$z]['Longitude']);
+		}
+
+		//Menentukan ongkir
+		for($z = 0; $z < $length2; $z++){
+			$finalResult[$z]['Ongkir'] = $this->ongkirCount($finalResult[$z]['Jarak']);
+		}
+
+		//get Final Price
+		for($z = 0; $z < $length2; $z++){
+			$finalResult[$z]['HargaFinal'] = ($finalResult[$z]['Harga']*$qty)-$finalResult[$z]['Ongkir'];
+		}
+
+		//final shorting
+		usort($finalResult, function($a, $b) { //Sort the array using a user defined function
+			return $a['HargaFinal'] > $b['HargaFinal'] ? -1 : 1; //Compare the scores
+		});
+
+		return $finalResult;
+		die();
+	}
+
+
+
+	public function getGeo($location){
+		$httpClient = new \Http\Adapter\Guzzle6\Client();
+		$provider = new \Geocoder\Provider\GoogleMaps\GoogleMaps($httpClient);
+		$geocoder = new \Geocoder\StatefulGeocoder($provider, 'en');
+		$result = $geocoder->geocodeQuery(GeocodeQuery::create($location));
+		$Longitude = $result->first()->getCoordinates()->getLongitude();
+		$Latitude = $result->first()->getCoordinates()->getLatitude();
+		$coordinates = array(
+			'Longitude' => $Longitude,
+			'Latitude' => $Latitude
+		);
+		return $coordinates;
+	}
+
+	public function KMeans($data){
+
+		$length = count($data);
+
+		//Menghilangkan dot pada list harga dari datasets
+		for($i = 0; $i < $length; $i++){
+			$data[$i]["Harga"] = str_replace(".", "", $data[$i]["Harga"]);
+		}
+
+		$max = $data[0]["Harga"];
+		$min = $data[$length-1]["Harga"];
+		$mid = (($min+$max)/2);
+
+		$centroid = array($max, $mid, $min);
+
+		$result = $this->KMeans_model->KMeans($data, $centroid);
+
+		return $result;
+
+	}
+
+	public function distance($LatOri,$LongOri,$LatDes,$LongDes){
+
+		$distance_data = file_get_contents('https://maps.googleapis.com/maps/api/distancematrix/json?&origins='.$LatOri.','.$LongOri.'&destinations='.$LatDes.','.$LongDes.'&key=AIzaSyAxXasmylWyKiP2KJ4PlzAjkTr23YjCC0Y');
+		$distance_arr = json_decode($distance_data);
+		$result = $distance_arr->rows;
+
+		//result is a distance on Meter
+		return $result[0]->elements[0]->distance->value;
+	}
+
+
+	public function ongkirCount($distance){
+
+		if($distance <= 10000){
+			$ongkir = 170000;
+		}else{
+			$distance = $distance - 10000;
+
+			$ongkir = 170000;
+			if($distance >= 5000){
+				$distance = $distance/5000;
+				if(round($distance == 0)){
+					$distance = 1;
+				}
+				$ongkir = $ongkir+(round($distance)*12000);
+			}else{
+				$ongkir = $ongkir+12000;
+			}
+		}
+		return $ongkir;
+	}
+
+	public function getDataAwal(){
+
+		$distance_data = file_get_contents('https://hargapangan.id/index.php?option=com_gtpihps&task=json.commodityPrices&province_id=12&price_type_id=1');
+		$distance_arr = json_decode($distance_data);
+		$result = $distance_arr;
+
+		echo json_encode($result);
+
+	}
+
+}
+
+
+?>
