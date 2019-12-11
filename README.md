@@ -9,6 +9,13 @@
 ```bash
 git clone https://github.com/AlifAbhiesa/Codeigniter-K-Means-Clistering.git
 ```
+
+<p> And Run Composer Update</p>
+
+```bash
+composer update
+```
+
 <p><b>4. Create your own Google API</b></p>
 You need 3 google API, google maps API to show routes, geocoding for translating address into Geographic Coordinates, and Distance matrix to provides distance between two place. Read how to get the API <p>
 <p>4.1. <a href="https://developers.google.com/maps/documentation/javascript/tutorial"> Read how to setup Google Maps API </a><p>
